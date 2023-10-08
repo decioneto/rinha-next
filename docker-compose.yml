@@ -1,0 +1,60 @@
+version: "3.8"
+services:
+    api1: # API - Instância 01
+        image: decio/rinha-next-1
+        environment:
+            DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rinha
+        depends_on:
+            - db
+        expose:
+            - "3000"
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.15"
+                    memory: "0.5GB"
+
+    api2: # API - Instância 02
+        image: decio/rinha-next-1
+        environment:
+            DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rinha
+        depends_on:
+            - db
+        expose:
+            - "3000"
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.15"
+                    memory: "0.5GB"
+
+    nginx: # Load Balancer
+        image: nginx:latest
+        depends_on:
+            - api1
+            - api2
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.15"
+                    memory: "0.3GB"
+
+    db: # Banco de dados
+        image: postgres
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "postgres"
+            POSTGRES_DB: "rinha"
+        deploy:
+            resources:
+                limits:
+                    cpus: "1.20"
+                    memory: "1.7GB"
+## 1.5 CPU
+## 3 GB
