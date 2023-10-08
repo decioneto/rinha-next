@@ -1,6 +1,6 @@
-import { prisma } from '@/services/prisma-service';
-import { validateDate } from '@/validations/validateDate';
-import { NextResponse } from 'next/server';
+import { prisma } from "@/services/prisma-service";
+import { validateDate } from "@/validations/validateDate";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
     try {
@@ -10,17 +10,22 @@ export async function POST(request: Request) {
             return NextResponse.json(
                 { data: "Invalid fields" },
                 { status: 422 }
-            )
+            );
+        }
+
+        if (!body.stack) {
+            body.stack = [];
         }
 
         if (
-            typeof body.apelido !== 'string' ||
-            typeof body.nome !== 'string' ||
-            typeof body.nascimento !== 'string' ) {
+            typeof body.apelido !== "string" ||
+            typeof body.nome !== "string" ||
+            typeof body.nascimento !== "string"
+        ) {
             return NextResponse.json(
                 { data: "Invalid fields" },
                 { status: 400 }
-            )
+            );
         }
 
         if (!validateDate(body.nascimento)) {
@@ -28,19 +33,16 @@ export async function POST(request: Request) {
         }
 
         const pessoa = await prisma.pessoa.create({
-            data: body
+            data: body,
         });
 
         return NextResponse.json(
             { location: `/pessoas/${pessoa.id}` },
             { status: 201 }
-        )
+        );
     } catch (error) {
         if (error instanceof Error) {
-            return NextResponse.json(
-                { error: error.message },
-                { status: 422 }
-            )
+            return NextResponse.json({ error: error.message }, { status: 422 });
         }
     }
 }
@@ -48,7 +50,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const t: string | null = searchParams.get('t');
+        const t: string | null = searchParams.get("t");
 
         if (!t) {
             throw new Error();
@@ -62,37 +64,28 @@ export async function GET(request: Request) {
                     {
                         nome: {
                             contains: `${t}`,
-                            mode: 'insensitive'
-
+                            mode: "insensitive",
                         },
                     },
                     {
                         apelido: {
                             contains: `${t}`,
-                            mode: 'insensitive'
-                        }
+                            mode: "insensitive",
+                        },
                     },
                     {
                         stack: {
-                            has: `${t}`
-                        }
+                            has: `${t}`,
+                        },
                     },
-                ]
-            }
-        })
+                ],
+            },
+        });
 
-        console.log(pessoas);
-
-        return NextResponse.json(
-            { data: pessoas },
-            { status: 200 }
-        )
+        return NextResponse.json({ data: pessoas }, { status: 200 });
     } catch (error) {
         if (error instanceof Error) {
-            return NextResponse.json(
-                { error: error.message },
-                { status: 400 }
-            )
+            return NextResponse.json({ error: error.message }, { status: 400 });
         }
     }
 }

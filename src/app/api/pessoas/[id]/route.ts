@@ -7,24 +7,19 @@ type QueryParams = {
     };
 };
 
-export async function GET({ params }: QueryParams) {
+export async function GET(request: Request, { params }: QueryParams) {
     try {
+        console.log(params);
         const { id } = params;
 
         const pessoa = await prisma.pessoa.findFirst({ where: { id } });
 
         if (!pessoa) throw new Error();
 
-        return NextResponse.json(
-            { data: pessoa },
-            { status: 200 }
-        )
+        return NextResponse.json({ data: pessoa }, { status: 200 });
     } catch (error) {
         if (error instanceof Error) {
-            return NextResponse.json(
-                { error: error.message },
-                { status: 400 }
-            )
+            return NextResponse.json({ error: error.message }, { status: 400 });
         }
     }
 }
