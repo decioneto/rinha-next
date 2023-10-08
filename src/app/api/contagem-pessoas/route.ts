@@ -6,5 +6,7 @@ export async function GET(request: Request) {
         const count = await prisma.pessoa.count();
 
         return NextResponse.json({ data: count }, { status: 200 });
-    } catch (error) {}
+    } catch (error) {
+        return NextResponse.json({ status: 400 });
+    }
 }
