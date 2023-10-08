@@ -1,7 +1,7 @@
 version: "3.8"
 services:
     api1: # API - Instância 01
-        image: decio/rinha-next-1
+        image: decioneto/rinha-next
         environment:
             DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rinha
         depends_on:
@@ -15,7 +15,7 @@ services:
                     memory: "0.5GB"
 
     api2: # API - Instância 02
-        image: decio/rinha-next-1
+        image: decioneto/rinha-next
         environment:
             DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rinha
         depends_on:
